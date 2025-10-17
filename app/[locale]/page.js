@@ -12,7 +12,7 @@ const CompetitionEntry = dynamic(
   () => import('@/components/competition/CompetitionEntry'),
   { 
     ssr: false,
-    loading: () => <div className="flex justify-center items-center h-screen bg-purple-900">
+    loading: () => <div className="flex justify-center items-center h-screen bg-slate-950">
       <div className="text-white">Loading...</div>
     </div>
   }

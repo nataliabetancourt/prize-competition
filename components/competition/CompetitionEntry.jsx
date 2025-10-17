@@ -10,7 +10,7 @@ import SuccessScreen from '@/components/competition/SuccessScreen';
 import { db, storage } from '@/lib/firebase';
 import { collection, doc, getDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import bgImg from "./assets/bg.png"
+import bgImg from "./assets/bg.webp"
 
 const CompetitionEntry = ({ translations, locale }) => {
   const router = useRouter();
@@ -39,26 +39,61 @@ const CompetitionEntry = ({ translations, locale }) => {
       setLoading(true);
       setError('');
       
+      console.log('Raw scanned data:', scannedData);
+      
       // Parse QR data
-      const qrData = JSON.parse(scannedData);
+      let qrData;
+      try {
+        qrData = JSON.parse(scannedData);
+        console.log('Parsed QR data:', qrData);
+      } catch (parseError) {
+        console.error('QR parse error:', parseError);
+        setError('Invalid QR code format. Please use a valid employee QR code.');
+        setLoading(false);
+        return;
+      }
+      
+      // Check if Firebase is initialized
+      if (!db) {
+        console.error('Firebase not initialized');
+        setError('Database connection error. Please refresh the page.');
+        setLoading(false);
+        return;
+      }
+      
+      // Verify the QR data has required fields
+      if (!qrData.uuid || !qrData.name) {
+        console.error('Missing required fields in QR data');
+        setError('Invalid QR code data. Please use a valid employee QR code.');
+        setLoading(false);
+        return;
+      }
       
       // Verify employee exists in Firebase
-      const employeeRef = doc(db, 'employees', qrData.uuid);
-      const employeeSnap = await getDoc(employeeRef);
-      
-      if (employeeSnap.exists()) {
-        const employee = {
-          ...employeeSnap.data(),
-          uuid: qrData.uuid
-        };
-        setEmployeeData(employee);
-        setStep('welcome');
-      } else {
-        setError(translations.employeeNotFound || 'Employee not found in system');
+      try {
+        console.log('Looking for employee with UUID:', qrData.uuid);
+        const employeeRef = doc(db, 'employees', qrData.uuid);
+        const employeeSnap = await getDoc(employeeRef);
+        
+        if (employeeSnap.exists()) {
+          console.log('Employee found:', employeeSnap.data());
+          const employee = {
+            ...employeeSnap.data(),
+            uuid: qrData.uuid
+          };
+          setEmployeeData(employee);
+          setStep('welcome');
+        } else {
+          console.error('Employee not found in database');
+          setError(translations.employeeNotFound || 'Employee not found in system. Please contact an administrator.');
+        }
+      } catch (dbError) {
+        console.error('Database query error:', dbError);
+        setError('Database error: ' + dbError.message);
       }
     } catch (err) {
-      console.error('QR scan error:', err);
-      setError(translations.invalidQR || 'Invalid QR code');
+      console.error('Unexpected QR scan error:', err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

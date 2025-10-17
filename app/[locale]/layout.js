@@ -24,25 +24,10 @@ const NavbarFallback = () => <div className="w-full h-16 bg-gray-100" aria-hidde
 const FooterFallback = () => <div className="w-full h-24 bg-gray-100" aria-hidden="true" />;
 
 export const metadata = {
-  title: "Top Auto Repair & Tire Shop in TX - Tire Store Service Center",
+  title: "TSSC Prize Competition",
   description:
     "Expert tire sales, auto repair, and maintenance across Texas. Trust our technicians for top care. Book your appointment online today!",
-  keywords:
-    "tire store service center, tire store, tire shop, tire repair shop, tire repair service, tire repair near me, auto repair shop, auto repair service, auto repair near me, car repair shop, car repair service, car repair near me, oil change service, oil change near me, brake repair service, brake repair near me, wheel alignment service, wheel alignment near me",
-  language: "en",
-  subject: "Auto Repair & Tire Shop in TX",
-  coverage: "United States",
-  robots: "index, follow",
-  author: "Tire Store Service Center",
   publisher: "TIRESTORE SERVICE CENTER by eMETHOD Inc.",
-  og: {
-    type: "website",
-    title: "Top Auto Repair & Tire Shop in TX - Tire Store Service Center",
-    description:
-      "Tire Store Service Center offers expert auto repair, tire sales, and maintenance services across Texas. Our technicians ensure top-notch care for your vehicle, from tires to repairs. Schedule an appointment online today!",
-    site_name: "Tire Store Service Center",
-    url: "https://www.tirestoretx.com/",
-  },
   alternates: {
     canonical: "https://www.tirestoretx.com/",
     languages: {
