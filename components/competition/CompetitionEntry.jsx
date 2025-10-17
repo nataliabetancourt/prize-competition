@@ -105,11 +105,31 @@ const CompetitionEntry = ({ translations, locale }) => {
       setLoading(true);
       setError('');
       
-      // Upload image to Firebase Storage
-      const fileName = `scores/${employeeData.uuid}/${Date.now()}_${imageFile.name}`;
-      const storageRef = ref(storage, fileName);
-      const snapshot = await uploadBytes(storageRef, imageFile);
-      const photoURL = await getDownloadURL(snapshot.ref);
+      console.log('Starting submission...', {
+        employeeId: employeeData.uuid,
+        game: selectedGame,
+        score: score,
+        fileName: imageFile.name
+      });
+      
+      let photoURL = '';
+      
+      try {
+        // Upload image to Firebase Storage
+        const fileName = `scores/${employeeData.uuid}/${Date.now()}_${imageFile.name}`;
+        console.log('Uploading to:', fileName);
+        
+        const storageRef = ref(storage, fileName);
+        const snapshot = await uploadBytes(storageRef, imageFile);
+        console.log('Upload complete:', snapshot);
+        
+        photoURL = await getDownloadURL(snapshot.ref);
+        console.log('Got download URL:', photoURL);
+      } catch (uploadError) {
+        console.error('Image upload error:', uploadError);
+        // Continue without image for now
+        photoURL = 'error-no-image';
+      }
       
       // Save score to Firestore
       const scoreData = {
@@ -122,7 +142,10 @@ const CompetitionEntry = ({ translations, locale }) => {
         eventDate: new Date().toISOString().split('T')[0]
       };
       
-      await addDoc(collection(db, 'scores'), scoreData);
+      console.log('Saving score data:', scoreData);
+      
+      const docRef = await addDoc(collection(db, 'scores'), scoreData);
+      console.log('Score saved with ID:', docRef.id);
       
       setStep('success');
       
@@ -133,7 +156,7 @@ const CompetitionEntry = ({ translations, locale }) => {
       
     } catch (err) {
       console.error('Score submission error:', err);
-      setError(translations.submitError || 'Error submitting score. Please try again.');
+      setError(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }

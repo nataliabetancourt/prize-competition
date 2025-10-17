@@ -48,7 +48,7 @@ const ScoreSubmission = ({ onSubmit, translations, employeeName, gameName, loadi
           >
             {imageFile 
               ? translations.changeImage || 'CHANGE IMAGE' 
-              : translations.uploadImage || 'UPLOAD IMAGE OF GAME SCORE'}
+              : translations.uploadGameScore || 'UPLOAD IMAGE OF GAME SCORE'}
           </button>
           
           <input
