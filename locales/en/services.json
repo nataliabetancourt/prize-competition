@@ -1,0 +1,103 @@
+{
+  "services": {
+    "ourServicesLabel": "OUR SERVICES",
+    "acService": {
+      "title": "Air Conditioning",
+      "description": "With the Texas heat, AC service is a must at times! Our skilled techs will identify any minor AC problem before it gets bigger. If there is a leak, we will fix it before it causes damage to the entire AC unit. This will extend the life of the AC system and optimize performance to keep the unit running as efficiently as possible. Stop by at any one of our locations and we will get your vehicle cool again!"
+    },
+    "alignmentService": {
+      "title": "Wheel Alignments",
+      "description": "A wheel alignment consists of adjusting the wheels of your vehicle so that all wheels are parallel to each other and perpendicular to the ground. Three basic angles contribute to proper wheel alignment: camber, caster, and toe. Camber is the measure of the degree of perpendicular offset from the road surface. Caster is the angle of your wheel's pivot, which is attached to the suspension, and when this angle is out of alignment, straight-line tracking is affected. Toe refers to the angle of directional difference between the tire and the centerline of the vehicle. The front and rear wheels on your vehicle should always be perpendicular to the ground and parallel to the tire beside it. Routine wheel alignments have the potential to save you money in the long run while promoting optimal vehicle performance."
+    },
+    "brakeService": {
+      "title": "Brake Repair",
+      "description": "Similar to other vehicle maintenance issues, the main factor to consider with brake pads/rotors is safety, safety, safety. Your vehicle will give you many signals when your brake pads/rotors need replacement, such as vibration, squealing noise, and many other signs. One of our experienced techs will gladly check your vehicle's brake pads and rotors to determine if they need replacement. Stop by one of our locations or give us a call and we will get you taken care of!"
+    },
+    "oilService": {
+      "title": "Lube, Oil and Filters",
+      "description": "Taking care of your vehicle's fluids is the best thing you can do for your car. Regular oil changes will protect your engine and give you better gas mileage. We offer both, regular and full synthetic oil changes. Visit one of our locations for a quick oil change."
+    },
+    "mechanicalService": {
+      "title": "Mechanical Repairs",
+      "description": "At the Tire Store, we will read your \"Check Engine\" light codes for you for free. After reading the code, we will let you know if the car is safe to drive or if it must go in for service immediately. We will usually recommend a Diagnostic on the system that has the fault code."
+    },
+    "stateInspectionService": {
+      "title": "Texas State Inspection",
+      "description": "At Tire Store, we won't charge you the state inspection fee unless your vehicle passes. Most of our locations including Bedford, Euless, Saginaw, Cleburne are capable of inspecting your vehicle for both the safety and emission state inspections. We will also accept digital proof of insurance to make it more convenient for you."
+    },
+    "tireService": {
+      "title": "Tire and Wheel Services",
+      "description": "Tires are one of the most essential parts of any vehicle. They affect the safety, performance, and traction of a car. Driving with a good tread tire is very beneficial for the vehicle and the driver. Good tires will reduce noise and allow your vehicle to drive more smoothly. Not only do good tires improve the way your vehicle drives, but they can also be lifesaving as well. Driving with a worn-out tire can cause many dangerous, safety related issues. At Tire Store Service Center, we offer a wide range of tire brands and sizes. Whether you drive a sedan or SUV, a van or truck, our experienced tire techs will get you taken care of without any upselling, we will only recommend what your vehicle needs. We also offer wheel repair services. Please stop by one of our locations (Bedford, Cleburne, Euless, Greenville, and Saginaw) or give us a call and we will get you taken care of!"
+    },
+    "towingService": {
+      "title": "Towing",
+      "description": "At the Tire Store, We will read your \"Check Engine\" light codes for you for free. After reading the Code, We will let you know if the car is safe to drive or if it must go in for service immediately. We will usually recommend a Diagnostic on the system that has the fault code."
+    },
+    "wheelAlignment": {
+      "sectionTitle": "Benefits of Wheel Alignment",
+      "content": "A wheel alignment ensures your vehicle runs safely and efficiently, reducing tire wear, improving gas mileage, and enhancing driving safety. Misaligned wheels lead to uneven tire wear, causing your vehicle to pull to one side while in motion. Neglecting wheel alignment can escalate into steering and suspension problems because misalignment not only strains your tires but also stresses suspension components. If your vehicle starts pulling to one side or your tires show uneven wear, address it promptly."
+    },
+    "servicePricing": {
+      "title": "Service Pricing",
+      "items": [
+        { "name": "CABIN AIR FILTER", "price": "$34.99" },
+        { "name": "ENGINE AIR FILTER", "price": "$24.99" },
+        { "name": "COOLANT FLUSH", "price": "$119.99" },
+        { "name": "BRAKE FLUSH", "price": "$119.99" },
+        { "name": "POWER STEERING FLUSH", "price": "$89.99" }
+      ],
+      "notes": [
+        "*Most Vehicles",
+        "*Including Installation"
+      ]
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "questions": [
+        {
+          "question": "Is it safe to drive my car with the \"check engine\" light on?",
+          "answer": "The light can come on for so many Emission related issues. These issues are not usually an imminent danger, but it can lead to other problems. A misfire can sometimes be fixed under $200, but if not fixed immediately can cause Catalyst Convertor Damage (very expensive repair)."
+        },
+        {
+          "question": "Will fixing my Engine light cost a lot?",
+          "answer": "Fixing your check Engine light Doesn't have to be expensive. It can get expensive if left untreated or if the fault is not diagnosed correctly. Should a Vehicle be diagnosed after the code is read? Yes, most codes don't tell you what the fix is. It just tells you the problem. An expert has to figure out the cause and fix the problem."
+        }
+      ]
+    },
+    "towing": {
+      "title": "Special Towing Offer",
+      "description": "We are always available for you in the Bedford, Central or Euless location! If you are within 5 miles of these locations and are taking your car to be checked with Tire Store Service Center, it will only cost you $75!",
+      "additionalInfo": "Our service is so convenient for you because our trucks are always working in the Bedford, Euless, Hurst, Colleyville area!",
+      "callNow": "Call Now 817-789-4444"
+    },
+    "chooseUs": {
+      "sectionLabel": "REASONS TO CHOOSE US",
+      "title": "What We Can Do For You",
+      "description": "We offer a full range of services to vehicle owners in Texas. We can help you with everything from an oil change to an engine change. We can handle any problem on both foreign and domestic vehicles.",
+      "reasons": [
+        "Friendly And Professional Group Of People",
+        "Auto Repair More Convenient",
+        "Same Day Service For Most Repairs And Maintenance",
+        "Wide Range Of Car Services",
+        "We Get The Job Done Right — The First Time"
+      ]
+    },
+    "servicesList": {
+      "tireAndWheel": "Tire and Wheel Services",
+      "mechanicalRepairs": "Mechanical Repairs",
+      "acService": "AC Service",
+      "alignments": "Alignments",
+      "brakeRepair": "Brake Repair",
+      "lubeOilsFilters": "Lube, Oils and Filters",
+      "stateInspection": "Texas State Inspection",
+      "towing": "Towing"
+    },
+    "servicesSection": {
+      "sectionTag": "OUR SERVICES",
+      "title": "Our Automotive Services",
+      "description": "We provide comprehensive auto repair and maintenance services to keep your vehicle running smoothly. From routine maintenance to complex repairs, our certified technicians have you covered.",
+      "moreQuestion": "Looking for something specific?",
+      "viewAllButton": "VIEW ALL SERVICES"
+    }
+  }
+}

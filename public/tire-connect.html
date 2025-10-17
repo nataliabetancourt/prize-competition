@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tire Connect Widget</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        overflow: hidden;
+      }
+
+      #tireconnect {
+        width: 100%;
+        min-height: 150px;
+      }
+
+      .loading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 150px;
+        text-align: center;
+        color: #555;
+        font-size: 14px;
+      }
+
+      .spinner {
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #8b5cf6;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="tireconnect-container">
+      <div class="loading" id="loading-indicator">
+        <div class="spinner"></div>
+        <div>Loading tire finder...</div>
+      </div>
+      <div id="tireconnect"></div>
+    </div>
+
+    <script>
+      // Debug flag - set to true to see detailed logs
+      const DEBUG = true;
+
+      function log(message, ...args) {
+        if (DEBUG) {
+          console.log(`[TireConnect] ${message}`, ...args);
+        }
+      }
+
+      // Function to initialize TireConnect
+      function initTireConnect() {
+        log("Initialization started");
+
+        // Always clear storage on initialization
+        clearTireConnectStorage();
+
+        // Remove any existing scripts
+        const existingScripts = document.querySelectorAll(
+          'script[src*="tireconnect.ca"]'
+        );
+        existingScripts.forEach((script) => {
+          if (script && script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
+        });
+
+        // Clear the container
+        const container = document.getElementById("tireconnect");
+        if (container) {
+          container.innerHTML = "";
+        }
+
+        // Show loading indicator
+        const loadingIndicator = document.getElementById("loading-indicator");
+        if (loadingIndicator) {
+          loadingIndicator.style.display = "flex";
+        }
+
+        // Reset TCWidget if it exists
+        if (window.TCWidget) {
+          log("TCWidget found in window, attempting reset");
+          if (typeof window.TCWidget.destroy === "function") {
+            try {
+              window.TCWidget.destroy();
+              log("TCWidget destroyed successfully");
+            } catch (e) {
+              log("Error destroying TCWidget:", e);
+            }
+          }
+
+          // Remove TCWidget from window
+          delete window.TCWidget;
+          log("Removed TCWidget from window");
+        }
+
+        // Load the TireConnect script
+        log("Loading TireConnect script");
+        loadTireConnectScript();
+      }
+
+      // Clear localStorage and sessionStorage
+      function clearTireConnectStorage() {
+        log("Clearing storage");
+        if (window.localStorage) {
+          try {
+            Object.keys(localStorage)
+              .filter(
+                (key) => key.startsWith("tc_") || key.includes("tireconnect")
+              )
+              .forEach((key) => {
+                log(`Removing localStorage key: ${key}`);
+                localStorage.removeItem(key);
+              });
+          } catch (e) {
+            log("Error clearing localStorage:", e);
+          }
+        }
+
+        if (window.sessionStorage) {
+          try {
+            Object.keys(sessionStorage)
+              .filter(
+                (key) => key.startsWith("tc_") || key.includes("tireconnect")
+              )
+              .forEach((key) => {
+                log(`Removing sessionStorage key: ${key}`);
+                sessionStorage.removeItem(key);
+              });
+          } catch (e) {
+            log("Error clearing sessionStorage:", e);
+          }
+        }
+      }
+
+      // Load the TireConnect script
+      function loadTireConnectScript() {
+        const script = document.createElement("script");
+        script.src = "https://app.tireconnect.ca/js/widget.js";
+        script.async = true;
+        script.id = "tire-connect-script";
+
+        script.onload = function () {
+          log("TireConnect script loaded successfully");
+
+          // Initialize the widget with a short delay
+          setTimeout(function () {
+            startTireConnect();
+          }, 300);
+        };
+
+        script.onerror = function (error) {
+          log("Failed to load TireConnect script", error);
+          const loadingIndicator = document.getElementById("loading-indicator");
+          if (loadingIndicator) {
+            loadingIndicator.innerHTML =
+              "<div>Error loading tire finder. Please refresh the page.</div>";
+          }
+        };
+
+        document.body.appendChild(script);
+        log("TireConnect script appended to body");
+      }
+
+      // Start TireConnect with custom redirect handling
+      function startTireConnect() {
+        log("Starting TireConnect initialization");
+
+        if (!window.TCWidget) {
+          log("TCWidget not found after script load!");
+          const loadingIndicator = document.getElementById("loading-indicator");
+          if (loadingIndicator) {
+            loadingIndicator.innerHTML =
+              "<div>Error loading tire finder. Please refresh the page.</div>";
+            loadingIndicator.style.display = "flex";
+          }
+          return;
+        }
+
+        try {
+          log("Setting up TCWidgetOptions");
+          // Override the redirect to top frame
+          window.TCWidgetOptions = {
+            onBeforeRedirect: function (url) {
+              log("Redirect intercepted, redirecting parent to /shop-tires/");
+              // Redirect parent window instead of iframe
+              window.parent.location.href = "/shop-tires/";
+              return false; // Prevent default redirect
+            },
+          };
+
+          log("Initializing TCWidget form");
+          // Initialize the widget
+          window.TCWidget.initForm({
+            apikey: "6637aba88ecf90ed53e09ddae683bc65",
+            container: "tireconnect",
+            locationDetect: "manual",
+            redirectUrl: "/shop-tires/",
+            // The widget will use TCWidgetOptions.onBeforeRedirect to handle redirects
+          });
+
+          log("TCWidget initialized successfully");
+
+          // Set up mutation observer to detect when content appears
+          const targetNode = document.getElementById("tireconnect");
+          if (targetNode) {
+            log("Setting up mutation observer");
+            const observer = new MutationObserver(function (mutations) {
+              if (targetNode.children.length > 0) {
+                log(
+                  "Content detected in widget container, hiding loading indicator"
+                );
+                const loadingIndicator =
+                  document.getElementById("loading-indicator");
+                if (loadingIndicator) {
+                  loadingIndicator.style.display = "none";
+                }
+
+                // Notify parent that widget is loaded
+                try {
+                  window.parent.postMessage(
+                    {
+                      type: "widget-loaded",
+                      success: true,
+                    },
+                    "*"
+                  );
+
+                  // Also try to resize
+                  const height = document.body.scrollHeight;
+                  window.parent.postMessage(
+                    {
+                      type: "resize-iframe",
+                      height: height,
+                    },
+                    "*"
+                  );
+                } catch (e) {
+                  log("Error sending loaded message to parent", e);
+                }
+
+                // Disconnect once we've detected content
+                observer.disconnect();
+              }
+            });
+
+            // Start observing
+            observer.observe(targetNode, { childList: true, subtree: true });
+
+            // Set a timeout to hide the loading indicator if no content appears
+            setTimeout(function () {
+              const loadingIndicator =
+                document.getElementById("loading-indicator");
+              if (
+                loadingIndicator &&
+                loadingIndicator.style.display !== "none"
+              ) {
+                log(
+                  "No content detected after timeout, hiding loading indicator anyway"
+                );
+                loadingIndicator.style.display = "none";
+
+                // Notify parent
+                try {
+                  window.parent.postMessage(
+                    {
+                      type: "widget-loaded",
+                      success: true,
+                    },
+                    "*"
+                  );
+                } catch (e) {
+                  log("Error sending timeout message to parent", e);
+                }
+              }
+            }, 5000); // 5 second timeout
+          }
+
+          // Try to resize parent iframe periodically
+          try {
+            setInterval(() => {
+              const height = document.body.scrollHeight;
+              window.parent.postMessage(
+                {
+                  type: "resize-iframe",
+                  height: height,
+                },
+                "*"
+              );
+            }, 1000);
+          } catch (e) {
+            log("Error setting up resize interval", e);
+          }
+        } catch (error) {
+          log("Error starting TireConnect widget:", error);
+          const loadingIndicator = document.getElementById("loading-indicator");
+          if (loadingIndicator) {
+            loadingIndicator.innerHTML =
+              "<div>Error loading tire finder. Please refresh the page.</div>";
+            loadingIndicator.style.display = "flex";
+          }
+
+          // Notify parent of failure
+          try {
+            window.parent.postMessage(
+              {
+                type: "widget-loaded",
+                success: false,
+                error: error.toString(),
+              },
+              "*"
+            );
+          } catch (e) {
+            log("Error sending error message to parent", e);
+          }
+        }
+      }
+
+      // Initialize when the page is loaded
+      window.addEventListener("DOMContentLoaded", function () {
+        log("DOMContentLoaded event fired");
+        initTireConnect();
+      });
+
+      // Handle messages from parent frame
+      window.addEventListener("message", function (event) {
+        // Check if parent is requesting a reset
+        if (event.data && event.data.action === "reset-tire-connect") {
+          log("Reset message received from parent");
+          initTireConnect();
+        }
+      });
+
+      // Additional fallback: If page is already loaded when this script runs
+      if (
+        document.readyState === "complete" ||
+        document.readyState === "interactive"
+      ) {
+        log("Document already loaded, initializing immediately");
+        initTireConnect();
+      }
+    </script>
+  </body>
+</html>

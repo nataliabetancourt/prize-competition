@@ -1,0 +1,30 @@
+{
+  "competition": {
+    "welcomeTitle": "Bienvenido a la Cena Anual de TSSC",
+    "scanInstructions": "Para comenzar a participar en la competencia de premios de la noche, ¡escanea tu código QR y sigue los pasos!",
+    "scanWithCamera": "ESCANEAR CÓDIGO QR CON CÁMARA",
+    "uploadImage": "CARGAR IMAGEN DE CÓDIGO QR",
+    "cancel": "Cancelar",
+    "verifying": "Verificando...",
+    "employeeNotFound": "Empleado no encontrado en el sistema",
+    "invalidQR": "Código QR inválido",
+    "hello": "Hola",
+    "readyToUpload": "¿Estás listo para cargar tus increíbles puntajes?",
+    "letsGo": "VAMOS",
+    "checkName": "Por favor asegúrese de que se muestre el nombre correcto arriba",
+    "selectGame": "Por favor seleccione el juego en el que está:",
+    "selectGamePlaceholder": "Seleccione el juego...",
+    "next": "SIGUIENTE",
+    "provideInfo": "Proporcione la siguiente información:",
+    "changeImage": "CAMBIAR IMAGEN",
+    "uploadGameScore": "CARGAR IMAGEN DEL PUNTAJE DEL JUEGO",
+    "writeScore": "Por favor escriba el puntaje aquí:",
+    "scorePlaceholder": "Ej. 250",
+    "submit": "ENVIAR",
+    "submitting": "ENVIANDO...",
+    "submitError": "Error al enviar el puntaje. Por favor intente de nuevo.",
+    "successTitle": "Has enviado tus resultados exitosamente",
+    "successMessage": "¡Buena suerte!",
+    "back": "ATRÁS"
+  }
+}

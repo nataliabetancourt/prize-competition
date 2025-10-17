@@ -1,0 +1,27 @@
+.slider{
+    height: auto;
+    width: 100%;
+    margin: auto;
+    overflow: hidden;
+}
+
+.slider .slide-track {
+    animation: scroll 30s linear infinite;
+    -webkit-animation: scroll 30s linear infinite;
+    width: calc(151px * 22);
+}
+
+.slider .slide {
+    width: 151px;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+        -webkit-transform: translateX(0);
+    }
+    100% {
+        transform: translateX(calc(-151px * 11));
+        -webkit-transform: translateX(calc(-151px * 11));
+    }
+}

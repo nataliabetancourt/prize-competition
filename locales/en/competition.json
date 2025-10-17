@@ -1,0 +1,30 @@
+{
+  "competition": {
+    "welcomeTitle": "Welcome to the TSSC Annual Dinner Party",
+    "scanInstructions": "To begin participating in the prize competition of the night, scan your QR code and follow the steps!",
+    "scanWithCamera": "SCAN QR CODE WITH CAMERA",
+    "uploadImage": "UPLOAD IMAGE OF QR CODE",
+    "cancel": "Cancel",
+    "verifying": "Verifying...",
+    "employeeNotFound": "Employee not found in system",
+    "invalidQR": "Invalid QR code",
+    "hello": "Hello",
+    "readyToUpload": "Are you ready to upload your amazing scores?",
+    "letsGo": "LET'S GO",
+    "checkName": "Please make sure that the correct name is shown above",
+    "selectGame": "Please select the game you are at:",
+    "selectGamePlaceholder": "Select the game...",
+    "next": "NEXT",
+    "provideInfo": "Provide the following information:",
+    "changeImage": "CHANGE IMAGE",
+    "uploadGameScore": "UPLOAD IMAGE OF GAME SCORE",
+    "writeScore": "Please write the score here:",
+    "scorePlaceholder": "Ex. 250",
+    "submit": "SUBMIT",
+    "submitting": "SUBMITTING...",
+    "submitError": "Error submitting score. Please try again.",
+    "successTitle": "You've submitted your results successfully",
+    "successMessage": "Good luck!",
+    "back": "BACK"
+  }
+}

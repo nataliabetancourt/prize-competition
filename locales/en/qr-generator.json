@@ -1,0 +1,24 @@
+{
+  "QRGenerator": {
+    "title": "Employee QR Code Generator",
+    "addEmployees": "Add Employees",
+    "uploadCSV": "Upload CSV File",
+    "csvFormat": "CSV should have a column: name",
+    "or": "OR",
+    "addManually": "Add Employee Manually",
+    "enterName": "Enter employee name:",
+    "actions": "Actions",
+    "downloadAll": "Download All QR Codes",
+    "exportCSV": "Export UUID Mapping (CSV)",
+    "exportFirebase": "Export for Firebase (JSON)",
+    "generatedCodes": "Generated QR Codes",
+    "download": "Download",
+    "remove": "Remove",
+    "instructions": "Instructions:",
+    "instruction1": "Upload a CSV file with employee names or add employees manually",
+    "instruction2": "Each employee gets a unique UUID automatically generated",
+    "instruction3": "Download individual QR codes or all at once",
+    "instruction4": "Export the data for Firebase import",
+    "instruction5": "Print QR codes on badges or stickers for the event"
+  }
+}
