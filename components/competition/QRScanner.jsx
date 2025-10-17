@@ -108,7 +108,7 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
       <h1 className="text-2xl sm:text-3xl font-bold mb-4">
         {translations.welcomeTitle || 'Welcome to the TSSC Annual Dinner Party'}
       </h1>
-      <p className="text-md sm:text-md mb-6 sm:mb-8 px-4">
+      <p className="text-lg sm:text-lg mb-6 sm:mb-8 px-4">
         {translations.scanInstructions || 'To begin participating in the prize competition of the night, scan your QR code and follow the steps!'}
       </p>
       
