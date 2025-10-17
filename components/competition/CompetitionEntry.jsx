@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Image from "next/image";
 import { useRouter } from 'next/navigation';
 import QRScanner from '@/components/competition/QRScanner';
 import GameSelection from '@/components/competition/GameSelection';
@@ -9,6 +10,7 @@ import SuccessScreen from '@/components/competition/SuccessScreen';
 import { db, storage } from '@/lib/firebase';
 import { collection, doc, getDoc, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import bgImg from "./assets/bg.png"
 
 const CompetitionEntry = ({ translations, locale }) => {
   const router = useRouter();
@@ -120,34 +122,21 @@ const CompetitionEntry = ({ translations, locale }) => {
   };
 
   return (
-    <div className="min-h-screen bg-purple-900 flex items-center justify-center relative">
+    <div className="min-h-screen bg-zinc-400 flex items-center justify-center relative">
       {/* Background image/pattern */}
-      <div className="absolute inset-0 opacity-20">
-        <img 
-          src="/images/competition-bg.jpg" 
-          alt="Background" 
-          className="w-full h-full object-cover"
-        />
+      <div className="absolute inset-0 mix-blend-multiply ">
+          <Image
+            src={bgImg}
+            alt="Background"
+            fill
+            priority={true}
+            sizes="100vw"
+            className="object-cover"
+            placeholder="blur"
+          />
+
       </div>
       
-      {/* Logo */}
-      <div className="absolute top-4 sm:top-8 left-4 sm:left-8">
-        <img 
-          src="/images/logo-white.png" 
-          alt="TSSC Logo" 
-          className="h-12 sm:h-16"
-        />
-      </div>
-      
-      {/* Language switcher */}
-      <div className="absolute top-4 sm:top-8 right-4 sm:right-8 flex items-center space-x-2">
-        <button 
-          onClick={() => router.push(`/${locale === 'en' ? 'es' : 'en'}/competition`)}
-          className="text-white hover:text-gray-300 transition-colors text-sm sm:text-base"
-        >
-          {locale === 'en' ? 'ES' : 'EN'}
-        </button>
-      </div>
       
       {/* Back button */}
       {step !== 'scan' && step !== 'success' && (
