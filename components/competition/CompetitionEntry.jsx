@@ -200,7 +200,7 @@ const CompetitionEntry = ({ translations, locale }) => {
       {step !== 'scan' && step !== 'success' && (
         <button
           onClick={handleBack}
-          className="absolute top-20 sm:top-24 left-4 sm:left-8 text-white border border-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full hover:bg-white hover:text-purple-900 transition-colors text-sm sm:text-base"
+          className="absolute top-20 sm:top-24 left-8 sm:left-32 text-white border border-white px-4 sm:px-6 py-1.5 sm:py-2 rounded-full hover:bg-white hover:text-purple-900 transition-colors text-sm sm:text-base"
         >
           ← {translations.back || 'BACK'}
         </button>
@@ -218,11 +218,11 @@ const CompetitionEntry = ({ translations, locale }) => {
         )}
         
         {step === 'welcome' && employeeData && (
-          <div className="bg-purple-800/50 backdrop-blur-md rounded-3xl p-10 text-center text-white">
-            <h1 className="text-4xl font-bold mb-4">
+          <div className="bg-slate-400/20 backdrop-blur-sm rounded-3xl p-10 text-center text-white">
+            <h1 className="text-3xl font-bold mb-4">
               {translations.hello || 'Hello'} {employeeData.name}
             </h1>
-            <p className="text-xl mb-8">
+            <p className="text-lg mb-8">
               {translations.readyToUpload || 'Are you ready to upload your amazing scores?'}
             </p>
             <button

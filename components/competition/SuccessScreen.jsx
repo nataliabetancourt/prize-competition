@@ -4,7 +4,7 @@ import React from 'react';
 
 const SuccessScreen = ({ translations }) => {
   return (
-    <div className="bg-purple-800/50 backdrop-blur-md rounded-3xl p-10 text-center text-white">
+    <div className="bg-slate-400/20 backdrop-blur-sm rounded-3xl p-10 text-center text-white">
       <h1 className="text-3xl font-bold mb-8">
         {translations.successTitle || "You've submitted your results successfully"}
       </h1>

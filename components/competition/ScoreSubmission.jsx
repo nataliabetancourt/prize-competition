@@ -28,13 +28,13 @@ const ScoreSubmission = ({ onSubmit, translations, employeeName, gameName, loadi
   };
 
   return (
-    <div className="bg-purple-800/50 backdrop-blur-md rounded-3xl p-10 text-white">
+    <div className="bg-slate-400/20 backdrop-blur-sm rounded-3xl p-10 text-white">
       {/* Employee name in top right */}
       <div className="text-right mb-6">
         <p className="text-lg opacity-80">{employeeName}</p>
       </div>
       
-      <h2 className="text-3xl font-bold mb-8 text-center">
+      <h2 className="text-2xl font-bold mb-8 text-center">
         {translations.provideInfo || 'Provide the following information:'}
       </h2>
       
@@ -44,7 +44,7 @@ const ScoreSubmission = ({ onSubmit, translations, employeeName, gameName, loadi
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="w-full bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-purple-900 transition-colors"
+            className="w-full bg-transparent border-2 border-white text-white px-8 py-4 rounded-full text-md font-semibold hover:bg-white hover:text-purple-900 transition-colors"
           >
             {imageFile 
               ? translations.changeImage || 'CHANGE IMAGE' 
@@ -81,7 +81,7 @@ const ScoreSubmission = ({ onSubmit, translations, employeeName, gameName, loadi
             value={score}
             onChange={(e) => setScore(e.target.value)}
             placeholder={translations.scorePlaceholder || 'Ex. 250'}
-            className="w-full bg-purple-700/50 text-white border border-white/30 rounded-full px-6 py-4 text-lg placeholder-white/50 focus:outline-none focus:border-white"
+            className="w-full bg-black/30 text-white border border-white/30 rounded-full px-6 py-4 text-lg placeholder-white/50 focus:outline-none focus:border-white"
             required
           />
         </div>

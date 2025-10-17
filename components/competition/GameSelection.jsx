@@ -12,13 +12,13 @@ const GameSelection = ({ games, onSelect, translations, employeeName }) => {
   };
 
   return (
-    <div className="bg-purple-800/50 backdrop-blur-md rounded-3xl p-10 text-white">
+    <div className="bg-slate-400/20 backdrop-blur-sm rounded-3xl p-10 text-white">
       {/* Employee name in top right */}
       <div className="text-right mb-6">
         <p className="text-lg opacity-80">{employeeName}</p>
       </div>
       
-      <h2 className="text-3xl font-bold mb-8 text-center">
+      <h2 className="text-2xl font-bold mb-8 text-center">
         {translations.selectGame || 'Please select the game you are at:'}
       </h2>
       
@@ -26,7 +26,7 @@ const GameSelection = ({ games, onSelect, translations, employeeName }) => {
         <select
           value={selectedGame}
           onChange={(e) => setSelectedGame(e.target.value)}
-          className="w-full bg-purple-700/50 text-white border border-white/30 rounded-full px-6 py-4 text-lg appearance-none cursor-pointer focus:outline-none focus:border-white"
+          className="w-full bg-black/30 text-white border border-white/30 rounded-full px-6 py-4 text-lg appearance-none cursor-pointer focus:outline-none focus:border-white"
         >
           <option value="">{translations.selectGamePlaceholder || 'Select the game...'}</option>
           {games.map((game) => (
