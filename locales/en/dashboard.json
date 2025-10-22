@@ -1,0 +1,16 @@
+{
+  "dashboard": {
+    "title": "Competition Dashboard",
+    "loading": "Loading scores...",
+    "filterByGame": "Filter by Game:",
+    "allGames": "All Games",
+    "totalScores": "Total Scores",
+    "name": "Name",
+    "game": "Game",
+    "score": "Score",
+    "image": "Image",
+    "viewImage": "View",
+    "noImage": "No image",
+    "noScores": "No scores found"
+  }
+}

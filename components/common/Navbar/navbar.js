@@ -151,6 +151,13 @@ const Navbar = () => {
             transition={{ duration: 0.8 }}
             className="hidden md:flex items-center space-x-6 lg:space-x-10"
           >
+            {/* Dashboard Link */}
+            <Link 
+              href={getLocalizedPath('/dashboard')}
+              className="text-white font-medium hover:text-purple-300 transition-colors"
+            >
+              Dashboard
+            </Link>
           
             {/* Language Selector */}
             <div className="relative">
@@ -188,6 +195,14 @@ const Navbar = () => {
 
           {/* Mobile Menu Toggle */}
           <div className="md:hidden flex items-center">
+            {/* Mobile Dashboard Link */}
+            <Link
+              href={getLocalizedPath('/dashboard')}
+              className="text-white font-medium mr-4 hover:text-purple-300 transition-colors"
+            >
+              Dashboard
+            </Link>
+            
             {/* Mobile Language Selector */}
             <button
               onClick={() => setLanguageMenuOpen(!languageMenuOpen)}
@@ -218,7 +233,6 @@ const Navbar = () => {
                 </button>
               </div>
             )}
-            
           </div>
         </div>
       </div>

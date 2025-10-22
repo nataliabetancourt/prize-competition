@@ -1,0 +1,21 @@
+{
+  "dashboard": {
+    "title": "Tablero de Competencia",
+    "loading": "Cargando puntajes...",
+    "filterByGame": "Filtrar por Juego:",
+    "allGames": "Todos los Juegos",
+    "totalScores": "Puntajes Totales",
+    "name": "Nombre",
+    "game": "Juego",
+    "score": "Puntaje",
+    "image": "Imagen",
+    "viewImage": "Ver",
+    "noImage": "Sin imagen",
+    "noScores": "No se encontraron puntajes",
+    "dashboardAccess": "Acceso al Tablero",
+    "password": "Contraseña",
+    "enterPassword": "Ingrese la contraseña",
+    "incorrectPassword": "Contraseña incorrecta",
+    "access": "Acceder al Tablero"
+  }
+}
