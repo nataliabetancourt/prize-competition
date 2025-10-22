@@ -38,8 +38,6 @@ async function uploadEmployees() {
         name: employee.name,
         uuid: employee.uuid,
         createdAt: new Date().toISOString(),
-        totalGamesPlayed: 0,
-        scores: []
       });
       console.log(`✓ Uploaded: ${employee.name}`);
     }
