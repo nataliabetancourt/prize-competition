@@ -1,57 +1,81 @@
-import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc } from 'firebase/firestore';
-import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { collection, doc, setDoc, getDocs } from 'firebase/firestore';
+import { db } from './firebase';
 
-// Get current directory (needed for ES modules)
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Your Firebase config - same as in your .env.local
-const firebaseConfig = {
-  apiKey: "AIzaSyAxnqpzKhq_Br1gqdVzkE98u8KJaREiDSQ",
-  authDomain: "tssc-prize-competition.firebaseapp.com",
-  projectId: "tssc-prize-competition",
-  storageBucket: "tssc-prize-competition.firebasestorage.app",
-  messagingSenderId: "712293395339",
-  appId: "1:712293395339:web:17a5f8b7f5bc9af7db1d8e"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-async function uploadEmployees() {
+/**
+ * Upload employees to Firebase Firestore with employee numbers
+ * @param {Array} employees - Array of employee objects with uuid, name, etc.
+ * @param {number} startingNumber - Starting employee number (default: 1)
+ * @returns {Promise} - Promise that resolves when all employees are uploaded
+ */
+export const uploadEmployeesToFirebase = async (employees, startingNumber = 1) => {
   try {
-    // Read the employee data file
-    const dataPath = join(__dirname, 'employee_data_firebase.json');
-    const rawData = readFileSync(dataPath, 'utf8');
-    const employees = JSON.parse(rawData);
+    const employeesCollection = collection(db, 'employees');
     
-    console.log(`Found ${employees.length} employees to upload...`);
+    // Get existing employees to determine the highest employee number
+    const existingEmployees = await getEmployeesFromFirebase();
+    const existingNumbers = existingEmployees
+      .map(emp => emp.employeeNumber)
+      .filter(num => num !== undefined);
+    
+    const highestExistingNumber = existingNumbers.length > 0 
+      ? Math.max(...existingNumbers) 
+      : 0;
+    
+    // Start numbering from either the provided starting number or continue from highest existing
+    let currentNumber = Math.max(startingNumber, highestExistingNumber + 1);
     
     // Upload each employee
-    for (const employee of employees) {
-      const docRef = doc(db, 'employees', employee.uuid);
-      await setDoc(docRef, {
-        name: employee.name,
-        uuid: employee.uuid,
-        createdAt: new Date().toISOString(),
+    const uploadPromises = employees.map((employee, index) => {
+      const docRef = doc(employeesCollection, employee.uuid);
+      
+      // Check if this employee already exists in the database
+      const existingEmployee = existingEmployees.find(emp => emp.id === employee.uuid);
+      
+      // If employee exists, keep their number; otherwise assign a new one
+      const employeeNumber = existingEmployee?.employeeNumber || currentNumber++;
+      
+      return setDoc(docRef, {
+        ...employee,
+        uuid: employee.uuid, // Ensure UUID is preserved
+        employeeNumber,
+        createdAt: existingEmployee?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString()
       });
-      console.log(`✓ Uploaded: ${employee.name}`);
-    }
+    });
     
-    console.log('\n✅ All employees uploaded successfully!');
-    console.log('Your competition is ready to go! 🎉');
-    
+    await Promise.all(uploadPromises);
+    console.log(`Successfully uploaded ${employees.length} employees to Firebase`);
+    console.log(`Employee numbers range: ${Math.max(startingNumber, highestExistingNumber + 1)} to ${currentNumber - 1}`);
+    return true;
   } catch (error) {
-    console.error('❌ Error uploading employees:', error);
+    console.error('Error uploading employees to Firebase:', error);
+    throw error;
   }
-  
-  // Exit the script
-  process.exit(0);
-}
+};
 
-// Run the upload
-uploadEmployees();
+/**
+ * Get all employees from Firebase
+ * @returns {Promise<Array>} - Promise that resolves with array of employees
+ */
+export const getEmployeesFromFirebase = async () => {
+  try {
+    const employeesCollection = collection(db, 'employees');
+    const snapshot = await getDocs(employeesCollection);
+    
+    const employees = [];
+    snapshot.forEach((doc) => {
+      employees.push({
+        ...doc.data(),
+        id: doc.id
+      });
+    });
+    
+    // Sort by employee number for consistent ordering
+    employees.sort((a, b) => (a.employeeNumber || 0) - (b.employeeNumber || 0));
+    
+    return employees;
+  } catch (error) {
+    console.error('Error fetching employees from Firebase:', error);
+    throw error;
+  }
+};

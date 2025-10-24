@@ -35,16 +35,17 @@ const QRCodeGenerator = ({ translations, locale }) => {
         const csvText = event.target.result;
         const parsedEmployees = parseCSV(csvText);
         
-        // Generate UUIDs for each employee
-        const employeesWithUUID = parsedEmployees.map(emp => ({
+        // Generate UUIDs and employee numbers for each employee
+        const employeesWithData = parsedEmployees.map((emp, index) => ({
           ...emp,
-          uuid: uuidv4()
+          uuid: uuidv4(),
+          employeeNumber: index + 1 // Start from 1
         }));
         
-        setEmployees(employeesWithUUID);
+        setEmployees(employeesWithData);
         
         // Save to localStorage for Firebase sync later
-        localStorage.setItem('employeeData', JSON.stringify(employeesWithUUID));
+        localStorage.setItem('employeeData', JSON.stringify(employeesWithData));
       };
       reader.readAsText(file);
     }
@@ -55,9 +56,15 @@ const QRCodeGenerator = ({ translations, locale }) => {
     const name = prompt(t.enterName);
     
     if (name) {
+      // Calculate the next employee number
+      const nextNumber = employees.length > 0 
+        ? Math.max(...employees.map(e => e.employeeNumber || 0)) + 1 
+        : 1;
+      
       const newEmployee = {
         name,
-        uuid: uuidv4()
+        uuid: uuidv4(),
+        employeeNumber: nextNumber
       };
       const updatedEmployees = [...employees, newEmployee];
       setEmployees(updatedEmployees);
@@ -74,21 +81,14 @@ const QRCodeGenerator = ({ translations, locale }) => {
     localStorage.setItem('employeeData', JSON.stringify(updatedEmployees));
   };
 
-  // Generate QR data - Two options:
-  
-  // Option 1: Full data (current - recommended)
+  // Generate QR data
   const getQRData = (employee) => {
     return JSON.stringify({
       uuid: employee.uuid,
       name: employee.name,
-      empId: employee.employee_id || ''
+      employeeNumber: employee.employeeNumber
     });
   };
-  
-  // Option 2: Minimal data (just UUID)
-  // const getQRData = (employee) => {
-  //   return employee.uuid;
-  // };
 
   // Download single QR code
   const downloadQRCode = (employee) => {
@@ -109,13 +109,13 @@ const QRCodeGenerator = ({ translations, locale }) => {
       // Draw QR code
       ctx.drawImage(img, 25, 25, 250, 250);
       
-      // Add name text
+      // Add name and employee number text
       ctx.fillStyle = 'black';
-      ctx.font = 'bold 16px Arial';
+      ctx.font = 'bold 18px Arial';
       ctx.textAlign = 'center';
       ctx.fillText(employee.name, 150, 300);
-      ctx.font = '12px Arial';
-      ctx.fillText(employee.employee_id || '', 150, 320);
+      ctx.font = '14px Arial';
+      ctx.fillText(`Employee #${employee.employeeNumber}`, 150, 320);
       
       // Download
       canvas.toBlob((blob) => {
@@ -154,13 +154,12 @@ const QRCodeGenerator = ({ translations, locale }) => {
   // Export UUID mapping CSV
   const exportUUIDMapping = () => {
     const csvContent = [
-      ['uuid', 'name', 'employee_id', 'phone'].join(','),
+      ['uuid', 'name', 'employeeNumber'].join(','),
       ...employees.map(emp => 
         [
           emp.uuid,
           emp.name,
-          emp.employee_id || '',
-          emp.phone || ''
+          emp.employeeNumber
         ].join(',')
       )
     ].join('\n');
@@ -263,8 +262,7 @@ const QRCodeGenerator = ({ translations, locale }) => {
                   includeMargin={true}
                 />
                 <h3 className="font-semibold mt-2 text-lg">{employee.name}</h3>
-                <p className="text-sm text-gray-600">{employee.employee_id || t.noId}</p>
-                <p className="text-xs text-gray-400">{employee.phone || t.noPhone}</p>
+                <p className="text-sm text-gray-600">Employee #{employee.employeeNumber}</p>
                 
                 <button
                   onClick={() => downloadQRCode(employee)}
