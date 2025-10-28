@@ -21,16 +21,23 @@ const CompetitionEntry = ({ translations, locale }) => {
   const [error, setError] = useState('');
 
   const games = [
-    'Pac-Man',
-    'Donkey Kong',
-    'Street Fighter',
-    'Mortal Kombat',
-    'Space Invaders',
-    'Galaga',
-    'Mario Bros',
-    'Sonic',
-    'Tetris',
-    'Other'
+    'Game #1: Space Invaders',
+    'Game #2: Hatchet Hero',
+    'Game #3: Mario & Sonic Olympic Games',
+    'Game #4: Rampage',
+    'Game #5: UFC',
+    'Game #6: Super Shot (Basketball)',
+    'Game #7: Super Bikes 3',
+    'Game #8: No Cross',
+    'Game #9: Elevator Action Invasion',
+    'Game #10: Fourth Place',
+    'Game #11: Top Gun Maverick',
+    'Game #12: Pac Man Battle Royal',
+    'Game #13: Mario Kart',
+    'Game #14: Guitar Hero',
+    'Game #15: Cyberpunk Turf Wars',
+    'Game #16: Big Buck Wild',
+    'Game #17: Darts',
   ];
 
   // Handle QR code scan
