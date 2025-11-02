@@ -6,9 +6,6 @@ import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
 const QRScanner = ({ onScan, translations, error, loading }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
-  const [availableCameras, setAvailableCameras] = useState([]);
-  const [selectedCamera, setSelectedCamera] = useState(null);
-  const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
   const [permissionError, setPermissionError] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const scannerRef = useRef(null);
@@ -24,24 +21,18 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
   // Check camera permissions
   const checkCameraPermission = async () => {
     try {
-      // iOS Safari specific handling
-      if (isIOS) {
-        // On iOS, we need to handle permissions differently
-        const result = await navigator.permissions.query({ name: 'camera' }).catch(() => null);
-        if (result?.state === 'denied') {
-          setPermissionError(true);
-          setHasPermission(false);
-          return false;
-        }
-      }
-
-      // Try to get camera access
+      // Try to get camera access with back camera preference
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: { 
-          facingMode: 'environment',
-          width: { ideal: 1280 },
-          height: { ideal: 720 }
+          facingMode: { exact: 'environment' } // Force back camera
         } 
+      }).catch(async () => {
+        // If exact constraint fails, try with ideal
+        return await navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: { ideal: 'environment' }
+          } 
+        });
       });
       
       // If successful, stop the stream immediately
@@ -55,43 +46,6 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
       setHasPermission(false);
       setPermissionError(true);
       return false;
-    }
-  };
-
-  // Load available cameras
-  const loadCameras = async () => {
-    try {
-      const devices = await Html5Qrcode.getCameras();
-      if (devices && devices.length) {
-        setAvailableCameras(devices);
-        
-        // iOS camera selection
-        if (isIOS && devices.length > 1) {
-          // On iOS, usually index 0 is front, index 1 is back
-          setCurrentCameraIndex(1);
-          setSelectedCamera(devices[1].id);
-        } else {
-          // For other devices, try to find back camera
-          let backCameraIndex = devices.findIndex(device => 
-            device.label.toLowerCase().includes('back') || 
-            device.label.toLowerCase().includes('rear') ||
-            device.label.toLowerCase().includes('environment')
-          );
-          
-          if (backCameraIndex === -1 && devices.length > 1) {
-            backCameraIndex = 1;
-          }
-          
-          if (backCameraIndex === -1) {
-            backCameraIndex = 0;
-          }
-          
-          setCurrentCameraIndex(backCameraIndex);
-          setSelectedCamera(devices[backCameraIndex].id);
-        }
-      }
-    } catch (err) {
-      console.error("Error loading cameras:", err);
     }
   };
 
@@ -109,12 +63,8 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
       setIsScanning(true);
       setPermissionError(false);
       
-      // Load cameras if not already loaded
-      if (availableCameras.length === 0) {
-        await loadCameras();
-      }
-      
-      const devices = availableCameras.length > 0 ? availableCameras : await Html5Qrcode.getCameras();
+      // Get available cameras
+      const devices = await Html5Qrcode.getCameras();
       
       if (!devices || devices.length === 0) {
         throw new Error("No cameras found");
@@ -135,29 +85,46 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
 
       const html5QrCode = new Html5Qrcode("qr-reader");
       
-      // iOS-optimized config
+      // Find back camera
+      let backCameraId = null;
+      
+      // Try to find back camera by label
+      const backCamera = devices.find(device => 
+        device.label.toLowerCase().includes('back') || 
+        device.label.toLowerCase().includes('rear') ||
+        device.label.toLowerCase().includes('environment')
+      );
+      
+      if (backCamera) {
+        backCameraId = backCamera.id;
+      } else if (devices.length > 1) {
+        // On most phones, back camera is the second one
+        backCameraId = devices[1].id;
+      } else {
+        // Only one camera available, use it
+        backCameraId = devices[0].id;
+      }
+      
+      // Mobile-optimized config
       const config = {
-        fps: isIOS ? 5 : 10, // Lower FPS on iOS for better performance
+        fps: isIOS ? 5 : 10,
         qrbox: { 
-          width: isIOS ? 250 : 280, 
-          height: isIOS ? 250 : 280 
+          width: 250, 
+          height: 250 
         },
         aspectRatio: 1.0,
-        // iOS specific settings
+        // Force environment facing mode
         videoConstraints: {
           facingMode: 'environment',
-          width: { ideal: isIOS ? 1280 : 1920 },
-          height: { ideal: isIOS ? 720 : 1080 }
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
       };
-      
-      // Use selected camera
-      const cameraId = selectedCamera || (devices[currentCameraIndex] ? devices[currentCameraIndex].id : devices[0].id);
       
       let scanProcessing = false;
       
       await html5QrCode.start(
-        cameraId,
+        backCameraId,
         config,
         (decodedText, decodedResult) => {
           // Prevent multiple scans
@@ -183,7 +150,6 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
       );
       
       scannerRef.current = html5QrCode;
-      setAvailableCameras(devices);
     } catch (err) {
       console.error("Error starting scanner:", err);
       setIsScanning(false);
@@ -195,30 +161,6 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
         alert(translations.cameraError || "Unable to access camera. Please check permissions and try again.");
       }
     }
-  };
-
-  const switchCamera = async () => {
-    if (availableCameras.length <= 1) return;
-    
-    // Stop current scanner
-    if (scannerRef.current && scannerRef.current.isScanning) {
-      try {
-        await scannerRef.current.stop();
-        scannerRef.current = null;
-      } catch (err) {
-        console.log('Error stopping scanner for camera switch');
-      }
-    }
-    
-    // Switch to next camera
-    const nextIndex = (currentCameraIndex + 1) % availableCameras.length;
-    setCurrentCameraIndex(nextIndex);
-    setSelectedCamera(availableCameras[nextIndex].id);
-    
-    // Restart scanner with new camera
-    setTimeout(() => {
-      startScanner();
-    }, 200);
   };
 
   const stopScanner = async () => {
@@ -335,7 +277,7 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            capture={isIOS ? "environment" : undefined}
+            capture="environment"
             onChange={handleFileUpload}
             className="hidden"
           />
@@ -345,21 +287,6 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
       {isScanning && (
         <div className="mt-8">
           <div id="qr-reader" className="mx-auto max-w-sm rounded-lg overflow-hidden"></div>
-          
-          {/* Camera switch button - only show if multiple cameras available */}
-          {availableCameras.length > 1 && (
-            <div className="mt-4 space-y-2">
-              <button
-                onClick={switchCamera}
-                className="bg-white/20 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition-colors"
-              >
-                {translations.switchCamera || 'Switch Camera'} ({currentCameraIndex + 1}/{availableCameras.length})
-              </button>
-              <p className="text-xs opacity-80">
-                {availableCameras[currentCameraIndex]?.label || `Camera ${currentCameraIndex + 1}`}
-              </p>
-            </div>
-          )}
           
           <button
             onClick={stopScanner}
