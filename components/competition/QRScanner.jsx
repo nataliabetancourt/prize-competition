@@ -6,27 +6,75 @@ import { Html5QrcodeScanner, Html5Qrcode } from 'html5-qrcode';
 const QRScanner = ({ onScan, translations, error, loading }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [hasPermission, setHasPermission] = useState(false);
+  const [availableCameras, setAvailableCameras] = useState([]);
+  const [selectedCamera, setSelectedCamera] = useState(null);
+  const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
   const scannerRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  // Load available cameras
+  const loadCameras = async () => {
+    try {
+      const devices = await Html5Qrcode.getCameras();
+      if (devices && devices.length) {
+        setAvailableCameras(devices);
+        
+        // Try to select back camera by default
+        // Back cameras usually contain "back" or "rear" in their label
+        // or are listed as "environment" facing mode
+        let backCameraIndex = devices.findIndex(device => 
+          device.label.toLowerCase().includes('back') || 
+          device.label.toLowerCase().includes('rear') ||
+          device.label.toLowerCase().includes('environment')
+        );
+        
+        // If no back camera found by label and there are multiple cameras,
+        // typically the back camera is the second one (index 1)
+        if (backCameraIndex === -1 && devices.length > 1) {
+          backCameraIndex = 1;
+        }
+        
+        // If still no back camera, just use the first available
+        if (backCameraIndex === -1) {
+          backCameraIndex = 0;
+        }
+        
+        setCurrentCameraIndex(backCameraIndex);
+        setSelectedCamera(devices[backCameraIndex].id);
+      }
+    } catch (err) {
+      console.error("Error loading cameras:", err);
+    }
+  };
 
   const startScanner = async () => {
     try {
       setIsScanning(true);
       
-      // Check for camera permission
-      const devices = await Html5Qrcode.getCameras();
+      // Load cameras if not already loaded
+      if (availableCameras.length === 0) {
+        await loadCameras();
+      }
+      
+      const devices = availableCameras.length > 0 ? availableCameras : await Html5Qrcode.getCameras();
+      
       if (devices && devices.length) {
         const html5QrCode = new Html5Qrcode("qr-reader");
         
-        // Configure for mobile - use back camera by default
+        // Configure for mobile with larger scanning area
         const config = {
           fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0
+          qrbox: { width: 280, height: 280 },
+          aspectRatio: 1.0,
+          // Additional config for better mobile performance
+          disableFlip: false,
+          experimentalFeatures: {
+            useBarCodeDetectorIfSupported: true
+          }
         };
         
-        // Start with back camera (usually higher quality on phones)
-        const cameraId = devices.length > 1 ? devices[1].id : devices[0].id;
+        // Use selected camera or the pre-selected back camera
+        const cameraId = selectedCamera || devices[currentCameraIndex].id;
         
         await html5QrCode.start(
           cameraId,
@@ -52,12 +100,37 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
         
         scannerRef.current = html5QrCode;
         setHasPermission(true);
+        setAvailableCameras(devices);
       }
     } catch (err) {
       console.error("Error starting scanner:", err);
       setIsScanning(false);
       alert(translations.cameraError || "Unable to access camera. Please check permissions.");
     }
+  };
+
+  const switchCamera = async () => {
+    if (availableCameras.length <= 1) return;
+    
+    // Stop current scanner
+    if (scannerRef.current && scannerRef.current.isScanning) {
+      try {
+        await scannerRef.current.stop();
+        scannerRef.current = null;
+      } catch (err) {
+        console.log('Error stopping scanner for camera switch');
+      }
+    }
+    
+    // Switch to next camera
+    const nextIndex = (currentCameraIndex + 1) % availableCameras.length;
+    setCurrentCameraIndex(nextIndex);
+    setSelectedCamera(availableCameras[nextIndex].id);
+    
+    // Restart scanner with new camera
+    setTimeout(() => {
+      startScanner();
+    }, 100);
   };
 
   const stopScanner = async () => {
@@ -98,6 +171,9 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
   };
 
   useEffect(() => {
+    // Load available cameras on mount
+    loadCameras();
+    
     return () => {
       stopScanner();
     };
@@ -143,6 +219,22 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
       {isScanning && (
         <div className="mt-8">
           <div id="qr-reader" className="mx-auto max-w-sm"></div>
+          
+          {/* Camera switch button - only show if multiple cameras available */}
+          {availableCameras.length > 1 && (
+            <div className="mt-4 space-y-2">
+              <button
+                onClick={switchCamera}
+                className="bg-white/20 backdrop-blur text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition-colors"
+              >
+                {translations.switchCamera || 'Switch Camera'} ({currentCameraIndex + 1}/{availableCameras.length})
+              </button>
+              <p className="text-xs opacity-80">
+                {availableCameras[currentCameraIndex]?.label || `Camera ${currentCameraIndex + 1}`}
+              </p>
+            </div>
+          )}
+          
           <button
             onClick={stopScanner}
             className="mt-4 text-white underline"

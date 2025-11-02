@@ -19,6 +19,20 @@ const CompetitionEntry = ({ translations, locale }) => {
   const [selectedGame, setSelectedGame] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isCompetitionClosed, setIsCompetitionClosed] = useState(false);
+
+  // Competition closing time - Tomorrow at 7PM CST
+  const CLOSING_TIME = new Date('2025-11-02T19:00:00-06:00'); // November 2, 2025 at 7PM CST
+  
+  // Alternative: Dynamic closing time (always tomorrow at 7PM CST)
+  // const getClosingTime = () => {
+  //   const tomorrow = new Date();
+  //   tomorrow.setDate(tomorrow.getDate() + 1);
+  //   tomorrow.setHours(19, 0, 0, 0); // 7PM
+  //   // Convert to CST timezone
+  //   return new Date(tomorrow.toLocaleString("en-US", {timeZone: "America/Chicago"}));
+  // };
+  // const CLOSING_TIME = getClosingTime();
 
   const games = [
     'Game #1: Space Invaders',
@@ -40,8 +54,29 @@ const CompetitionEntry = ({ translations, locale }) => {
     'Game #17: Darts',
   ];
 
+  // Check if competition is closed
+  useEffect(() => {
+    const checkIfClosed = () => {
+      const now = new Date();
+      const nowCST = new Date(now.toLocaleString("en-US", {timeZone: "America/Chicago"}));
+      setIsCompetitionClosed(nowCST > CLOSING_TIME);
+    };
+
+    checkIfClosed();
+    // Check every minute
+    const interval = setInterval(checkIfClosed, 60000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   // Handle QR code scan
   const handleQRScan = async (scannedData) => {
+    // Check if competition is closed
+    if (isCompetitionClosed) {
+      setError(translations.competitionClosed || 'Sorry, the competition has ended. Entries closed at 7PM CST.');
+      return;
+    }
+
     try {
       setLoading(true);
       setError('');
@@ -108,6 +143,12 @@ const CompetitionEntry = ({ translations, locale }) => {
 
   // Handle score submission
   const handleScoreSubmit = async (score, imageFile) => {
+    // Double-check if competition is closed
+    if (isCompetitionClosed) {
+      setError(translations.competitionClosed || 'Sorry, the competition has ended. Entries closed at 7PM CST.');
+      return;
+    }
+
     try {
       setLoading(true);
       setError('');
@@ -186,6 +227,39 @@ const CompetitionEntry = ({ translations, locale }) => {
     }
   };
 
+  // Show closed message if competition has ended
+  if (isCompetitionClosed && step === 'scan') {
+    return (
+      <div className="min-h-screen bg-zinc-400 flex items-center justify-center relative">
+        <div className="absolute inset-0 mix-blend-multiply">
+          <Image
+            src={bgImg}
+            alt="Background"
+            fill
+            priority={true}
+            sizes="100vw"
+            className="object-cover"
+            placeholder="blur"
+          />
+        </div>
+        
+        <div className="relative z-10 w-full max-w-2xl mx-auto px-4">
+          <div className="bg-slate-400/20 backdrop-blur-sm rounded-3xl p-10 text-center text-white">
+            <h1 className="text-3xl font-bold mb-4">
+              {translations.competitionEndedTitle || 'Competition Has Ended'}
+            </h1>
+            <p className="text-xl mb-4">
+              {translations.competitionEndedMessage || 'Thank you for your entries! The score submission period ended at 7:00 PM CST.'}
+            </p>
+            <p className="text-lg">
+              {translations.winnersAnnounced || 'Winners will be announced shortly!'}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-zinc-400 flex items-center justify-center relative">
       {/* Background image/pattern */}
@@ -199,9 +273,7 @@ const CompetitionEntry = ({ translations, locale }) => {
             className="object-cover"
             placeholder="blur"
           />
-
       </div>
-      
       
       {/* Back button */}
       {step !== 'scan' && step !== 'success' && (
