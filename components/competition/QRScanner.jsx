@@ -277,7 +277,6 @@ const QRScanner = ({ onScan, translations, error, loading }) => {
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            capture="environment"
             onChange={handleFileUpload}
             className="hidden"
           />
