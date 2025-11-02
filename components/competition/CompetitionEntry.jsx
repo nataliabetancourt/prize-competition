@@ -52,7 +52,8 @@ const CompetitionEntry = ({ translations, locale }) => {
     'Game #15: Cyberpunk Turf Wars',
     'Game #16: Big Buck Wild',
     'Game #17: Darts',
-    'Game #18: Galaga Assault'
+    'Game #18: Galaga Assault',
+    'Game #19: Godzilla Kaiju Wars VR'
   ];
 
   // Check if competition is closed
