@@ -22,7 +22,7 @@ const CompetitionEntry = ({ translations, locale }) => {
   const [isCompetitionClosed, setIsCompetitionClosed] = useState(false);
 
   // Competition closing time - Tomorrow at 7PM CST
-  const CLOSING_TIME = new Date('2025-11-02T19:15:00-06:00'); // November 2, 2025 at 7PM CST
+  const CLOSING_TIME = new Date('2025-11-02T19:07:00-06:00'); // November 2, 2025 at 7PM CST
   
   // Alternative: Dynamic closing time (always tomorrow at 7PM CST)
   // const getClosingTime = () => {
